@@ -45,9 +45,15 @@ if not url:
             url = a["browser_download_url"]; break
 urllib.request.urlretrieve(url, "/tmp/sunshine.deb")
 PYEOF
+COPY make_edid.py /tmp/make_edid.py
+RUN python3 /tmp/make_edid.py /etc/X11/virtual-display.bin
+
+COPY xorg.conf /etc/X11/xorg.conf
+
 RUN python3 /tmp/get_sunshine.py && \
     apt-get update && \
     (apt-get install -y /tmp/sunshine.deb || apt-get install -f -y) && \
+    setcap cap_sys_admin+p "$(readlink -f "$(which sunshine)")" && \
     rm -f /tmp/get_sunshine.py /tmp/sunshine.deb
 
 EXPOSE 47984 47989 47990 47998 47999 48000 48001 48002 48010
