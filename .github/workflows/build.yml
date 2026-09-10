@@ -5,7 +5,19 @@ on:
     branches: [ main ]
 
 jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect base image entrypoint
+        run: |
+          docker pull docker.io/vastai/kvm:ubuntu_desktop_22.04-2025-11-21
+          echo "=== ENTRYPOINT/CMD оригинального образа ==="
+          docker inspect docker.io/vastai/kvm:ubuntu_desktop_22.04-2025-11-21 \
+            --format='ENTRYPOINT: {{.Config.Entrypoint}}
+CMD: {{.Config.Cmd}}'
+
   build:
+    needs: inspect
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
