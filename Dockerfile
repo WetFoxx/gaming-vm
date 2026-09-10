@@ -2,7 +2,7 @@ FROM docker.io/vastai/kvm:ubuntu_desktop_22.04-2025-11-21
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 32-бит архитектура и автопринятие лицензии Steam (без этого apt зависает на EULA)
+# 32-битная архитектура и автопринятие лицензии Steam
 RUN dpkg --add-architecture i386 && \
     echo "steam steam/question select I AGREE" | debconf-set-selections && \
     echo "steam steam/license note ''" | debconf-set-selections
@@ -28,7 +28,7 @@ RUN apt-get update && \
         desktop-file-utils google-chrome-stable && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Sunshine — качаем нужный релиз через python (jq в контейнере глючил на парсинге)
+# Sunshine — надёжная загрузка последнего релиза + автодоустановка зависимостей
 RUN cat << 'PYEOF' > /tmp/get_sunshine.py
 import urllib.request, json
 req = urllib.request.Request("https://api.github.com/repos/LizardByte/Sunshine/releases/latest", headers={"User-Agent": "curl"})
